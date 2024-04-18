@@ -1,17 +1,9 @@
-'use strict';
 
 export function createMarkup(arr) {
     return arr
-        .map(({
-        webformatURL,
-        largeImageURL,
-        tags,
-        likes,
-        views,
-        comments,
-        downloads,
-    }) => `
-    <li class="galleryCard">
+        .map(item => {
+            return `
+         <li class="galleryCard">
           <a href="${largeImageURL}" class="lightbox-image">
             <img src="${webformatURL}" alt="${tags}" class="picture-icon">
           </a>
@@ -39,6 +31,7 @@ export function createMarkup(arr) {
             </div>
           </div>
 
-        </li>`).join('');
-    
+        </li>`
+        }).join('');
+
 }
