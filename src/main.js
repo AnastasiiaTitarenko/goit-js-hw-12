@@ -17,6 +17,7 @@ const btnSubmit = document.getElementById("search-btn");
 const searchForm = document.getElementById("search-form");
 const searchInput = document.querySelector("[picture]");
 const searchGallery = document.getElementById("gallery");
+const loader = document.querySelector(".loader");
 const btnLoadMore = document.querySelector(".load-more-btn");
 
 let page = 1;
@@ -43,23 +44,21 @@ async function handleSubmit(event) {
     
 try {
     const response = await getPhotos(currentQuery, page);
-        
-    if (response.data.length === 0) {
+    console.log(response);
+    
+    if (response.hits.length === 0) {
         return iziToast.error({
             message: "Sorry, there are no images matching your search query. Please try again!",
         });
     } else {
-        searchGallery.innerHTML = createMarkup(response.data);
-        // // toggleLoadButton(response.data);
-        return response.data;
+        searchGallery.innerHTML = createMarkup(response.hits);
+        toggleLoadButton(response.hits);
+        return response;
         gallery.refresh();
     }
 } catch (error) {
+    console.error(error);
 
-    iziToast.error({
-        message: "Error. Please try again!"
-        });
-    clearMarkup();
     
 } finally {
             loader.style.display = "none";
@@ -78,9 +77,9 @@ async function handleLoadMore() {
   try {
       const response = await getPhotos(currentQuery, page);
       
-    if (response.data.length > 0) {
-      searchGallery.insertAdjacentHTML('beforeend', createMarkup(response.data));
-        // togglebtnLoadMore(response.totalHits);
+    if (response.hits.length > 0) {
+      searchGallery.insertAdjacentHTML('beforeend', createMarkup(response.hits));
+        toggleLoadButton(response.total);
         
         // Функія для скролу
         
@@ -93,7 +92,7 @@ async function handleLoadMore() {
         });
         const lastPage = Math.ceil(response.total / 20);
         if (lastPage === page) {
-            btnLoadMore.searchGallery.add('is-hidden');
+            btnLoadMore.classList.add('is-hidden');
             return iziToast.info({
                message: "We're sorry, but you've reached the end of search results"
            })
@@ -106,7 +105,7 @@ async function handleLoadMore() {
       });
     }
    
-    if (page * 15 >= response.data) {
+    if (page * 15 >= response.hits) {
       btnLoadMore.style.display = 'none';
       iziToast.info({
         title: 'End of search results',
@@ -115,16 +114,17 @@ async function handleLoadMore() {
       });
     }
   } catch (error) {
-    iziToast.error({
-      title: 'Error',
-      message:
-        'An error occurred while fetching more images. Please try again later!',
-    });
+      console.error(error);
+    // iziToast.error({
+    //   title: 'Error',
+    //   message:
+    //     'An error occurred while fetching more images. Please try again later!',
+    // });
   }
 }
 
-function toggleLoadButton(totalHits) {
-  if (page * 15 < totalHits) {
+function toggleLoadButton(total) {
+  if (page * 15 < total) {
     btnLoadMore.style.display = 'block';
   } else {
     btnLoadMore.style.display = 'none';

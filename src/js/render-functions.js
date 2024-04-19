@@ -1,7 +1,7 @@
 
 export function createMarkup(arr) {
     return arr
-        .map(item => {
+      .map(({ largeImageURL, webformatURL, tags, likes, views, comments, downloads }) => {
             return `
          <li class="galleryCard">
           <a href="${largeImageURL}" class="lightbox-image">
