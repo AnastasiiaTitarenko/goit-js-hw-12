@@ -16,19 +16,30 @@ import { createMarkup } from "./js/render-functions";
 const btnSubmit = document.getElementById("search-btn");
 const searchForm = document.getElementById("search-form");
 const searchInput = document.querySelector("[picture]");
-const searchGallery = document.getElementById("gallery");
+const searchGallery = document.querySelector(".gallery");
 const loader = document.querySelector(".loader");
 const btnLoadMore = document.querySelector(".load-more-btn");
 
+// -------Gallery-------
+
+const galleryLightbox = new SimpleLightbox('.gallery a', {
+                    captionType: 'attr',
+                    captionsData: 'alt',
+                    captionDelay: 250,
+});
+
 let page = 1;
-let currentQuery = null;
-let response = null;
+let currentQuery = "";
+let lastPage = 0;
+// let response = null;
+
+btnLoadMore.style.display = 'none';
 
 searchForm.addEventListener("submit", handleSubmit);
 
 //------ очищення вмісту галереї-----
 function clearMarkup() {
-  searchGallery.innerHTML = '';
+searchGallery.innerHTML = '';
 }
 // ----------------------------------
 
@@ -41,14 +52,15 @@ btnLoadMore.addEventListener('click', event => {
 async function handleSubmit(event) {
     event.preventDefault();
     searchGallery.innerHTML = '';
-     gallery.refresh(); 
+    page = 1;
+    galleryLightbox.refresh(); 
   
     currentQuery = event.currentTarget.elements['picture'].value.trim();
 
     loader.style.display = "block";
     
 try {
-     response = await getPhotos(currentQuery, page);
+     const response = await getPhotos(currentQuery, page);
     // console.log(response);
     
     if (response.hits.length === 0) {
@@ -68,18 +80,13 @@ try {
             searchForm.reset();
 }
 }
-// -------Gallery-------
-const gallery = new SimpleLightbox(`.galleryCard a`, {
-                    captionType: `attr`,
-                    captionsData: `alt`,
-                    captionDelay: 250,
-});
+
 
 // -------Load More-------
 async function handleLoadMore() {
   page += 1;
   try {
-       response = await getPhotos(currentQuery, page);
+      const response = await getPhotos(currentQuery, page);
       
     if (response.hits.length > 0) {
       searchGallery.insertAdjacentHTML('beforeend', createMarkup(response.hits));
@@ -95,7 +102,8 @@ async function handleLoadMore() {
 
         // -------Last Page-------
         const lastPage = Math.ceil(response.totalHits / 20);
-        if (lastPage === page) {
+        if (lastPage === 0) {
+            btnLoadMore.style.display = 'none';
             btnLoadMore.classList.add('is-hidden');
             return iziToast.info({
             message: "We're sorry, but you've reached the end of search results"
@@ -123,12 +131,15 @@ async function handleLoadMore() {
 }
 // -------Load More BTN-------
 function toggleLoadButton(response) {
-    
+   
   if (page * 20 < response.totalHits) {
-    btnLoadMore.style.display = 'block';
-  } else {
-    btnLoadMore.style.display = 'none';
+   btnLoadMore.style.display = 'block';
+
   }
+//   else {
+//     btnLoadMore.style.display = 'none';
+    //   }
+    
 }
                 
 
