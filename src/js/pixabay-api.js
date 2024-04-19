@@ -15,11 +15,11 @@ export async function getPhotos(picture, page) {
                 page: page,
             }
         })
-    console.log(response.data);
+    
         return response.data;
     }
-    // catch (error) {
-    //     throw new Error(error.message);
+//     catch (error) {
+//         throw new Error(error.message);
 
 // }
 

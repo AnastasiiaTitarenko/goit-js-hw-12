@@ -35,7 +35,7 @@ btnLoadMore.addEventListener('click', event => {
 
 async function handleSubmit(event) {
     event.preventDefault();
-    searchGallery.innerHTML = ''
+    searchGallery.innerHTML = '';
   
     currentQuery = event.currentTarget.elements['picture'].value.trim();
 
@@ -44,15 +44,15 @@ async function handleSubmit(event) {
 try {
     const response = await getPhotos(currentQuery, page);
         
-    if (response.results.length === 0) {
+    if (response.data.length === 0) {
         return iziToast.error({
             message: "Sorry, there are no images matching your search query. Please try again!",
         });
     } else {
-        searchGallery.innerHTML = createMarkup(response.results);
+        searchGallery.innerHTML = createMarkup(response.data);
         // // toggleLoadButton(response.data);
-        // return response.data;
-        //     gallery.refresh();
+        return response.data;
+        gallery.refresh();
     }
 } catch (error) {
 
@@ -78,8 +78,8 @@ async function handleLoadMore() {
   try {
       const response = await getPhotos(currentQuery, page);
       
-    if (response.results.length > 0) {
-      searchGallery.insertAdjacentHTML('beforeend', createMarkup(response.results));
+    if (response.data.length > 0) {
+      searchGallery.insertAdjacentHTML('beforeend', createMarkup(response.data));
         // togglebtnLoadMore(response.totalHits);
         
         // Функія для скролу
@@ -106,7 +106,7 @@ async function handleLoadMore() {
       });
     }
    
-    if (currentPage * 15 >= response.results) {
+    if (page * 15 >= response.data) {
       btnLoadMore.style.display = 'none';
       iziToast.info({
         title: 'End of search results',
@@ -124,7 +124,7 @@ async function handleLoadMore() {
 }
 
 function toggleLoadButton(totalHits) {
-  if (currentPage * 15 < totalHits) {
+  if (page * 15 < totalHits) {
     btnLoadMore.style.display = 'block';
   } else {
     btnLoadMore.style.display = 'none';
