@@ -22,6 +22,7 @@ const btnLoadMore = document.querySelector(".load-more-btn");
 
 let page = 1;
 let currentQuery = null;
+let response = null;
 
 searchForm.addEventListener("submit", handleSubmit);
 
@@ -47,8 +48,8 @@ async function handleSubmit(event) {
     loader.style.display = "block";
     
 try {
-    const response = await getPhotos(currentQuery, page);
-    console.log(response);
+     response = await getPhotos(currentQuery, page);
+    // console.log(response);
     
     if (response.hits.length === 0) {
         return iziToast.error({
@@ -56,8 +57,8 @@ try {
         });
     } else {
         searchGallery.innerHTML = createMarkup(response.hits);
-        toggleLoadButton(response.hits.length);
-        return response;
+        toggleLoadButton(response);
+        // return response;
     }
 
 } catch (error) {
@@ -78,11 +79,11 @@ const gallery = new SimpleLightbox(`.galleryCard a`, {
 async function handleLoadMore() {
   page += 1;
   try {
-      const response = await getPhotos(currentQuery, page);
+       response = await getPhotos(currentQuery, page);
       
     if (response.hits.length > 0) {
       searchGallery.insertAdjacentHTML('beforeend', createMarkup(response.hits));
-        toggleLoadButton(response.hits.length);
+        toggleLoadButton(response);
         
         // Функія для скролу
         const {height: galleryCardHeight} = document.querySelector('.galleryCard')
@@ -109,12 +110,11 @@ async function handleLoadMore() {
     }
       
 //    -------Check--------
-    if (page * 20 >= response.hits) {
+    if (page * 20 >= response.totalHits) {
       btnLoadMore.style.display = 'none';
       iziToast.info({
         title: 'End of search results',
-        message:
-          "We're sorry, but you're nearing the end of the search results.",
+        message: "We're sorry, but you're nearing the end of the search results.",
       });
     }
   } catch (error) {
@@ -122,8 +122,9 @@ async function handleLoadMore() {
   }
 }
 // -------Load More BTN-------
-function toggleLoadButton() {
-  if (page * 20 < response.hits) {
+function toggleLoadButton(response) {
+    
+  if (page * 20 < response.totalHits) {
     btnLoadMore.style.display = 'block';
   } else {
     btnLoadMore.style.display = 'none';
