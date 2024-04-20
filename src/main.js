@@ -53,7 +53,7 @@ async function handleSubmit(event) {
     event.preventDefault();
     searchGallery.innerHTML = '';
     page = 1;
-    galleryLightbox.refresh(); 
+   
   
     currentQuery = event.currentTarget.elements['picture'].value.trim();
 
@@ -72,6 +72,7 @@ try {
         toggleLoadButton(response);
         // return response;
     }
+     galleryLightbox.refresh(); 
 
 } catch (error) {
     console.error(error);
@@ -80,7 +81,6 @@ try {
             searchForm.reset();
 }
 }
-
 
 // -------Load More-------
 async function handleLoadMore() {
