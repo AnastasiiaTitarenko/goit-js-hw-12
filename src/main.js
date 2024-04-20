@@ -91,6 +91,7 @@ async function handleLoadMore() {
     if (response.hits.length > 0) {
       searchGallery.insertAdjacentHTML('beforeend', createMarkup(response.hits));
         toggleLoadButton(response);
+        galleryLightbox.refresh();
         
         // Функія для скролу
         const {height: galleryCardHeight} = document.querySelector('.galleryCard')
