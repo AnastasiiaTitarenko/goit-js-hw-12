@@ -103,10 +103,10 @@ async function handleLoadMore() {
         });
 
         // -------Last Page-------
-        const lastPage = Math.ceil(response.totalHits / 20);
+        const lastPage = Math.ceil(response.totalHits / 15);
         if (lastPage === 0) {
             btnLoadMore.style.display = 'none';
-            btnLoadMore.classList.add('is-hidden');
+            // btnLoadMore.classList.add('is-hidden');
             return iziToast.info({
             message: "We're sorry, but you've reached the end of search results"
             });
@@ -120,7 +120,7 @@ async function handleLoadMore() {
     }
       
 //    -------Check--------
-    if (page * 20 >= response.totalHits) {
+    if (page * 15 >= response.totalHits) {
       btnLoadMore.style.display = 'none';
       iziToast.info({
         title: 'End of search results',
@@ -134,16 +134,13 @@ async function handleLoadMore() {
 // -------Load More BTN-------
 function toggleLoadButton(response) {
    
-  if (page * 20 < response.totalHits) {
+  if (page * 15 < response.totalHits) {
    btnLoadMore.style.display = 'block';
 
   }
-//   else {
-//     btnLoadMore.style.display = 'none';
-//       }
+  else {
+    btnLoadMore.style.display = 'none';
+      }
     
 }
                 
-
-
-
