@@ -64,10 +64,10 @@ try {
     // console.log(response);
     
     if (response.hits.length === 0) {
+        btnLoadMore.style.display = 'none';
         return iziToast.error({
             message: "Sorry, there are no images matching your search query. Please try again!",
         });
-            btnLoadMore.style.display = 'none';
     } else {
         searchGallery.innerHTML = createMarkup(response.hits);
         toggleLoadButton(response);
